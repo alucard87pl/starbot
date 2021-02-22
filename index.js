@@ -2,16 +2,13 @@
 const Discord = require('discord.js');
 require('dotenv').config();
 
+const commandHandler = require('./commands');
 const client = new Discord.Client();
 
-client.on('ready', () => {
+client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', msg => {
-    if (msg.content === 'ping') {
-        msg.reply('Pong!');
-    }
-});
+client.on('message', commandHandler);
 
 client.login(process.env.TOKEN);
