@@ -12,16 +12,19 @@ const die = (type, max) => {
     if (type == 'f') { //Fudge dice
         return Math.random() > 0.5 ? '+' : '-'
     } else {
+        min = Math.ceil(1)
         max = Math.floor(max);
-        return Math.floor(Math.random() * (max + 1)) + 1;
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
 }
 
 module.exports = async (msg, args) => {
     if (!args.length) return;
-    console.log('New Roll Command pool:');
+    let reply = "Dice Pool Results:\n"
     args.forEach((pool, i) => {
-        console.log('Pool #' + (i + 1) + " (" + pool + "):", cast(pool).join(","))
+        reply += 'Pool #' + (i + 1) + " **(" + pool + "): **" + cast(pool).join(", ") + '\n'
     });
+    console.log(reply)
+    await msg.channel.send(reply)
 };
