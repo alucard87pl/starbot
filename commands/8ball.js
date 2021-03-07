@@ -13,5 +13,5 @@ module.exports = async (msg, args) => {
     if (!args.length) return;
     const i = Math.floor(Math.random() * eightBall.length);
     const reply = eightBall[i];
-    await msg.channel.send(`${msg.author} ${reply} 🚂`);
+    await msg.channel.send(`${msg.author} 🎱 ${reply}`);
 };

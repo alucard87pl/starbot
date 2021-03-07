@@ -1,6 +1,6 @@
 const ping = require('./ping');
 const eightBall = require('./8ball');
-const xisjusty = require('./just');
+const xisy = require('./just');
 const roll = require('./roll');
 
 const guildID = process.env.GUILD_ID;
@@ -9,7 +9,7 @@ const channelID = process.env.CHANNEL_ID;
 const commands = {
     ping,
     '8ball': eightBall,
-    'xisjusty': xisjusty,
+    'xisy': xisy,
     'roll': roll
 };
 
