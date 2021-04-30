@@ -1,6 +1,8 @@
+//"I WILL REFACTOR THIS LATER" © Daniel Schiffman
+
 const mergeImages = require('merge-images'); // https://github.com/lukechilds/merge-images
 const { Canvas, Image } = require('canvas');
-const { MessageAttachment } = require('discord.js');
+const { MessageAttachment, MessageEmbed } = require('discord.js');
 
 
 
@@ -18,6 +20,21 @@ function imageList(roll) {
     return list
 }
 var rollImg;
+
+function richEmbedRollCommandResponseCrafter(roll, total, doubles) { //enterprise code is FUN, isn't it? ;)
+    let dbl = doubles ? "✨ YAY! ✨" : "Nay...😥"
+    let stn = doubles ? roll[2] : 0
+    const embed = new MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle('Your roll results are here!')
+        .addFields(
+            { name: 'Total', value: total, inline: true },
+            { name: 'Doubles', value: dbl, inline: true },
+            { name: 'Stunts', value: stn, inline: true }
+        )
+        .setImage('attachment://output.png')
+    return embed
+}
 
 module.exports = async (msg) => {
     const roll = [d(6), d(6), d(6)];
@@ -39,7 +56,13 @@ module.exports = async (msg) => {
             height: 67
         },
     )
-        .then((img) => { rollImg = img; console.log(rollImg) });
-    console.log(rollImg)
-    await msg.channel.send(`${msg.author} ${roll} ${total} ${doubles}`);
+        .then((img) => {
+            rollImg = img
+            const sfbuff = new Buffer.from(rollImg.split(",")[1], "base64");
+            const sfattach = new MessageAttachment(sfbuff, "output.png");
+            embed = richEmbedRollCommandResponseCrafter(roll, total, doubles)
+            msg.channel.send({ embed, files: [sfattach] })
+            //msg.channel.send(`${msg.author} ${roll} ${total} ${doubles}`, sfattach);
+            //hacky sacky, JS is whacky
+        });
 };
