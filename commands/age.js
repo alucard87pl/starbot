@@ -4,8 +4,6 @@ const mergeImages = require('merge-images'); // https://github.com/lukechilds/me
 const { Canvas, Image } = require('canvas');
 const { MessageAttachment, MessageEmbed } = require('discord.js');
 
-
-
 function d(s) {
     min = Math.ceil(1);
     max = Math.floor(s);
@@ -30,9 +28,11 @@ function richEmbedRollCommandResponseCrafter(roll, total, doubles) { //enterpris
         .addFields(
             { name: 'Total', value: total, inline: true },
             { name: 'Doubles', value: dbl, inline: true },
-            { name: 'Stunts', value: stn, inline: true }
         )
         .setImage('attachment://output.png')
+    if (doubles) {
+        embed.addFields({ name: 'Stunts', value: stn, inline: true })
+    }
     return embed
 }
 
