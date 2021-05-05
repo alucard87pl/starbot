@@ -3,6 +3,7 @@ const eightBall = require('./8ball');
 const xisy = require('./just');
 const roll = require('./roll');
 const age = require('./age');
+const svg = require('./svg')
 
 const guildID = process.env.GUILD_ID;
 const channelID = process.env.CHANNEL_ID;
@@ -12,7 +13,8 @@ const commands = {
     '8ball': eightBall,
     'xisy': xisy,
     'roll': roll,
-    'r': age
+    'r': age,
+    'svg': svg
 };
 
 const prefix = '!'
