@@ -24,7 +24,7 @@ function richEmbedRollCommandResponseCrafter(roll, total, doubles) { //enterpris
     let stn = doubles ? roll[2] : 0
     const embed = new MessageEmbed()
         .setColor('#0099ff')
-        .setTitle('Your roll results are here!')
+        .setTitle('Your roll results are in!')
         .addFields(
             { name: 'Total', value: total, inline: true },
             { name: 'Doubles', value: dbl, inline: true },
@@ -43,7 +43,6 @@ module.exports = async (msg) => {
         (r, i) => roll.indexOf(r) !== i
     )
     imgList = imageList(roll)
-    console.log(imgList)
     mergeImages([
         { src: imgList[0], x: 0, y: 0 },
         { src: imgList[1], x: 67, y: 0 },
@@ -61,8 +60,7 @@ module.exports = async (msg) => {
             const sfbuff = new Buffer.from(rollImg.split(",")[1], "base64");
             const sfattach = new MessageAttachment(sfbuff, "output.png");
             embed = richEmbedRollCommandResponseCrafter(roll, total, doubles)
-            msg.channel.send({ embed, files: [sfattach] })
-            //msg.channel.send(`${msg.author} ${roll} ${total} ${doubles}`, sfattach);
+            msg.channel.send(`${msg.author}`, { embed, files: [sfattach] })
             //hacky sacky, JS is whacky
         });
 };
