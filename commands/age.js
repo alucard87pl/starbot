@@ -1,8 +1,9 @@
 //"I WILL REFACTOR THIS LATER" © Daniel Schiffman
+const mergeImages = require('merge-base64');
 
-const mergeImages = require('merge-images'); // https://github.com/lukechilds/merge-images
 const { Canvas, Image } = require('canvas');
 const { MessageAttachment, MessageEmbed } = require('discord.js');
+const svgize = require('../helpers/svg');
 
 function d(s) {
     min = Math.ceil(1);
@@ -10,20 +11,11 @@ function d(s) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function imageList(roll) {
-    list = [];
-    list.push('./assets/dice/d' + roll[0] + 'b.png')
-    list.push('./assets/dice/d' + roll[1] + 'b.png')
-    list.push('./assets/dice/d' + roll[2] + 'r.png')
-    return list
-}
-var rollImg;
-
 function richEmbedRollCommandResponseCrafter(roll, total, doubles) { //enterprise code is FUN, isn't it? ;)
     let dbl = doubles ? "✨ YAY! ✨" : "Nay...😥"
     let stn = doubles ? roll[2] : 0
     const embed = new MessageEmbed()
-        .setColor('#0099ff')
+        .setColor(doubles ? '#e86845' : '#45c5e8')
         .setTitle('Your roll results are in!')
         .addFields(
             { name: 'Total', value: total, inline: true },
@@ -41,26 +33,25 @@ module.exports = async (msg) => {
     const total = roll.reduce((a, b) => a + b, 0)
     const doubles = roll.some(
         (r, i) => roll.indexOf(r) !== i
-    )
-    imgList = imageList(roll)
-    mergeImages([
-        { src: imgList[0], x: 0, y: 0 },
-        { src: imgList[1], x: 67, y: 0 },
-        { src: imgList[2], x: 134, y: 0 }
-    ],
-        {
-            Canvas: Canvas,
-            Image: Image,
-            width: 201,
-            height: 67
-        },
-    )
-        .then((img) => {
-            rollImg = img
-            const sfbuff = new Buffer.from(rollImg.split(",")[1], "base64");
-            const sfattach = new MessageAttachment(sfbuff, "output.png");
-            embed = richEmbedRollCommandResponseCrafter(roll, total, doubles)
-            msg.channel.send(`${msg.author}`, { embed, files: [sfattach] })
-            //hacky sacky, JS is whacky
-        });
-};
+    );
+
+    const [d1, d2, d3] = await Promise.all([
+        svgize(roll[0], '#e86845'),
+        svgize(roll[1], '#e86845'),
+        svgize(roll[2], '#45c5e8')
+    ])
+
+    const mergedImage = await mergeImages(
+        [
+            new Buffer.from(d1.split(",")[1], "base64"),
+            new Buffer.from(d2.split(",")[1], "base64"),
+            new Buffer.from(d3.split(",")[1], "base64")
+        ],
+        { offset: 3 }
+    );
+
+    const sfbuff = new Buffer.from(mergedImage.split(",")[1], "base64");
+    const sfattach = new MessageAttachment(sfbuff, "output.png");
+    embed = richEmbedRollCommandResponseCrafter(roll, total, doubles)
+    msg.channel.send(`${msg.author}`, { embed, files: [sfattach] })
+}
